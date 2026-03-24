@@ -1,0 +1,45 @@
+{
+  "$schema": "https://raw.githubusercontent.com/anthropics/claude-code/main/hooks-schema.json",
+  "_comment": "Add these hooks to your Claude Code settings.json under the 'hooks' key. Adjust vault paths to match your setup.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "command": "bash -c 'FILE=\"$CLAUDE_FILE_PATH\"; if [[ \"$FILE\" == *.md ]] && [[ \"$FILE\" == *obsidian-vaults* ]]; then echo \"Remember: Update the modified field in frontmatter when editing Obsidian notes.\"; fi'",
+        "description": "Remind to update modified timestamp when editing vault notes"
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "command": "bash -c 'FILE=\"$CLAUDE_FILE_PATH\"; if [[ \"$FILE\" == *.md ]] && [[ \"$FILE\" == *obsidian-vaults* ]] && [[ \"$FILE\" != *_templates/* ]]; then python3 \"$(dirname \"$0\")/../scripts/update-modified.py\" \"$FILE\" 2>/dev/null || true; fi'",
+        "description": "Auto-update modified timestamp after editing a vault note"
+      },
+      {
+        "matcher": "Write",
+        "command": "bash -c 'FILE=\"$CLAUDE_FILE_PATH\"; if [[ \"$FILE\" == *.md ]] && [[ \"$FILE\" == *obsidian-vaults* ]] && [[ \"$FILE\" != *01-daily/* ]] && [[ \"$FILE\" != *_templates/* ]]; then python3 \"$(dirname \"$0\")/../scripts/link-to-daily.py\" \"$FILE\" 2>/dev/null || true; fi'",
+        "description": "Auto-link newly created notes to today's daily note"
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'if command -v qmd &>/dev/null; then qmd embed 2>/dev/null || true; fi'",
+            "timeout": 120,
+            "statusMessage": "Updating QMD search index..."
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": ".*",
+        "command": "bash -c 'echo \"Vault maintenance tip: Run vault-health-check.sh periodically to keep your vault clean.\"'",
+        "description": "Periodic vault maintenance reminder"
+      }
+    ]
+  }
+}
