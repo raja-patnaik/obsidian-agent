@@ -5,7 +5,7 @@ This is the personal Obsidian vault for Raja. Claude Code agents should read thi
 ## Vault Info
 
 - **Vault type**: personal
-- **Owner**: Raja (patnaik.raja@gmail.com)
+- **Owner**: (your name and email)
 - **Path**: (update with actual path)
 - **Companion vault**: work vault at (update with actual path)
 

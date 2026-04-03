@@ -1,0 +1,23 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+.python-version
+
+# Obsidian user state
+.obsidian/workspace*.json
+
+# uv
+uv.lock
+
+# IDE
+.vscode/
+.idea/
+
+# Environment
+.env
+.env.*
