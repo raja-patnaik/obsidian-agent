@@ -1,0 +1,8 @@
+[project]
+name = "obsidian-agent"
+version = "0.1.0"
+description = "Claude Code skills, hooks, and scripts for managing Obsidian vaults"
+requires-python = ">=3.10"
+dependencies = [
+    "pyyaml>=6.0",
+]

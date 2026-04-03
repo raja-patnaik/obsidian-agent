@@ -9,10 +9,7 @@ Usage:
     python process-inbox.py /path/to/vault [--dry-run]
 """
 
-import os
 import sys
-import re
-import shutil
 import yaml
 from datetime import datetime
 from pathlib import Path
@@ -77,7 +74,7 @@ def determine_destination(vault_path: Path, fm: dict, filename: str) -> Path:
                     dt = created
                 base_folder = base_folder / str(dt.year) / f"{dt.month:02d}"
             except (ValueError, AttributeError):
-                pass
+                print(f"  ⚠ Could not parse 'created' date: {created!r} — skipping date subfolder")
 
     # Projects get their own subfolder
     if note_type == "project":
@@ -166,11 +163,15 @@ def process_inbox(vault_path: Path, dry_run: bool = False):
         if not dry_run:
             dest_folder.mkdir(parents=True, exist_ok=True)
 
-            # Write updated content
+            # Write updated content, then verify before removing source
             updated_content = rebuild_file(fm, body)
             dest_path.write_text(updated_content, encoding="utf-8")
 
-            # Remove from inbox
+            if not dest_path.exists():
+                print(f"  ✗ Failed to write {dest_path} — keeping original")
+                errors += 1
+                continue
+
             filepath.unlink()
 
         moved += 1
